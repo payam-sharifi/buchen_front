@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   alpha,
   Container,
@@ -6,40 +6,39 @@ import {
   Stack,
   Typography,
   useTheme,
-} from '@mui/material';
-import { useTranslations } from 'next-intl';
-import { useParams, useRouter } from 'next/navigation';
+} from "@mui/material";
+
+import { useParams } from "next/navigation";
 
 import {
   useGetListPlansQuery,
   useGetListTagQuery,
-} from '#/redux/services/user/planningApi';
+} from "@/redux/services/planningApi";
 
-import { useState, useEffect } from 'react';
-import MonthsNavigation from '#/ui/main/planning/common/MonthsNavigation';
-import WeeksNavigation from '#/ui/main/planning/common/weekView/WeeksNavigation';
-import DaysOfWeek from '#/ui/main/planning/common/weekView/DaysOfWeek';
+import { useState, useEffect } from "react";
+import MonthsNavigation from "@/components/planning/common/MonthsNavigation";
+import WeeksNavigation from "@/components/planning/common/weekView/WeeksNavigation";
+import DaysOfWeek from "@/components/planning/common/weekView/DaysOfWeek";
 
-import AddPlanningModal from '#/ui/main/planning/common/AddPlanningModal';
-import Header from '#/ui/main/planning/common/Header';
+import AddPlanningModal from "@/components/planning/common/AddPlanningModal";
+import Header from "@/components/planning/common/Header";
 
-import FilterModal from '#/ui/main/planning/common/FilterModal';
-import Day from '#/ui/main/planning/common/Day';
-import moment from 'jalali-moment';
+import FilterModal from "@/components/planning/common/FilterModal";
+import Day from "@/components/planning/common/Day";
+import moment from "jalali-moment";
 
-type viewType = 'week' | 'month';
-const defaultView: viewType = localStorage.getItem('pmlm-calender-view') as
-  | 'week'
-  | 'month';
+type viewType = "week" | "month";
+const defaultView: viewType = localStorage.getItem("pmlm-calender-view") as
+  | "week"
+  | "month";
 
 export default function Page() {
-  const t = useTranslations();
   const theme = useTheme();
- 
+
   const { lang } = useParams();
   const [openAddPlanningModal, setOpenAddPlanningModal] =
     useState<boolean>(false);
-  const [view, setView] = useState<viewType>(defaultView || 'week');
+  const [view, setView] = useState<viewType>(defaultView || "week");
   useState<boolean>(false);
   const [filterModal, setFilterModal] = useState<boolean>(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(moment().format());
@@ -60,11 +59,11 @@ export default function Page() {
   });
 
   useEffect(() => {
-    setSelectedTag(tagListData?.data.map((i) => i.planTagId) || []);
+    setSelectedTag(tagListData?.data.map((i:any) => i.planTagId) || []);
   }, [tagListData]);
 
   const changeView: (value: viewType) => void = (value) => {
-    localStorage.setItem('pmlm-calender-view', value);
+    localStorage.setItem("pmlm-calender-view", value);
     setView(value);
   };
 
@@ -73,7 +72,7 @@ export default function Page() {
       FromDate: daysOfSelectedMonth[0],
       ToDate: daysOfSelectedMonth.slice(-1)[0],
     },
-    { skip: !(daysOfSelectedMonth.length !== 0 && view == 'month') },
+    { skip: !(daysOfSelectedMonth.length !== 0 && view == "month") }
   );
 
   const selectedWeekPlans = useGetListPlansQuery(
@@ -81,23 +80,23 @@ export default function Page() {
       FromDate: daysOfSelectedWeek[0],
       ToDate: daysOfSelectedWeek.slice(-1)[0],
     },
-    { skip:!(daysOfSelectedWeek.length !== 0 && view == 'week') },
+    { skip: !(daysOfSelectedWeek.length !== 0 && view == "week") }
   );
   useEffect(() => {
     setDaysOfSelectedWeek(() => {
       var index = 0;
       var days: string[] = [];
       while (
-        moment(selectedWeek).startOf('week').format('w') ===
-        moment(selectedWeek).startOf('week').add(index, 'day').format('w')
+        moment(selectedWeek).startOf("week").format("w") ===
+        moment(selectedWeek).startOf("week").add(index, "day").format("w")
       ) {
         days.push(
           moment(selectedWeek)
             .locale(lang)
-            .startOf('week')
-            .add(index, 'day')
-            .locale('en')
-            .format(),
+            .startOf("week")
+            .add(index, "day")
+            .locale("en")
+            .format()
         );
         index += 1;
       }
@@ -112,21 +111,21 @@ export default function Page() {
       while (
         moment(selectedMonth)
           .locale(lang)
-          .startOf('month')
-          .format('yyyy-MM') ===
+          .startOf("month")
+          .format("yyyy-MM") ===
         moment(selectedMonth)
           .locale(lang)
-          .startOf('month')
-          .add(index, 'day')
-          .format('yyyy-MM')
+          .startOf("month")
+          .add(index, "day")
+          .format("yyyy-MM")
       ) {
         days.push(
           moment(selectedMonth)
             .locale(lang)
-            .startOf('month')
-            .add(index, 'day')
-            .locale('en')
-            .format(),
+            .startOf("month")
+            .add(index, "day")
+            .locale("en")
+            .format()
         );
         index += 1;
       }
@@ -134,30 +133,29 @@ export default function Page() {
     });
   }, [selectedMonth]);
 
-  
-
   return (
-    <Container maxWidth="md" sx={{ px: '0px' }}>
+    <Container maxWidth="md" sx={{ px: "0px" }}>
       <Header
-        setSelectedMonth={view === 'month' ? setSelectedMonth : setSelectedWeek}
+        setSelectedMonth={view === "month" ? setSelectedMonth : setSelectedWeek}
         setFilterModal={setFilterModal}
       />
 
-      {view === 'month' && (
+      {view === "month" && (
         <>
           <MonthsNavigation
             selectedMonth={selectedMonth}
             setSelectedMonth={setSelectedMonth}
           />
-          <Stack sx={{ bgcolor: 'background.paper' }}>
+          <Stack sx={{ bgcolor: "background.paper" }}>
             {daysOfSelectedMonth.map((item, index) => (
               <Day
                 setOpenQuickAddModal={setOpenQuickAddModal}
                 item={item}
                 key={index + selectedMonth}
-                 
-                sessions={selectedMonthPlans.data?.data.filter(
-                  (i) => i.planTagId !=null ? selectedTag.includes(i.planTagId) || !i.isOwner : (i.planRequestTypeId || !i.isOwner),
+                sessions={selectedMonthPlans.data?.data.filter((i:any) =>
+                  i.planTagId != null
+                    ? selectedTag.includes(i.planTagId) || !i.isOwner
+                    : i.planRequestTypeId || !i.isOwner
                 )}
               />
             ))}
@@ -165,15 +163,15 @@ export default function Page() {
         </>
       )}
 
-      {view === 'week' && (
+      {view === "week" && (
         <>
           <WeeksNavigation
             selectedWeek={selectedWeek}
             setSelectedWeek={setSelectedWeek}
           />
 
-          <Grid container columns={9} sx={{ bgcolor: 'background.paper' }}>
-            <Grid container xs={1.5} sx={{ mt: '' }} item>
+          <Grid container columns={9} sx={{ bgcolor: "background.paper" }}>
+            <Grid container xs={1.5} sx={{ mt: "" }} item>
               <Grid
                 item
                 xs={12}
@@ -183,10 +181,10 @@ export default function Page() {
                   zIndex: 3,
                   bgcolor: alpha(theme.palette.background.paper, 0.4),
                   pt: 1,
-                  position: 'sticky',
+                  position: "sticky",
                   top: 0,
-                  color: 'background.default',
-                  height: '50px',
+                  color: "background.default",
+                  height: "50px",
                 }}
               >
                 *
@@ -194,7 +192,7 @@ export default function Page() {
               {hoursOfDay.map((item) => (
                 <Grid
                   item
-                  key={item + '123'}
+                  key={item + "123"}
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
@@ -202,16 +200,21 @@ export default function Page() {
                   sx={{
                     pt: 2,
                     zIndex: 2,
-                    height: '50px',
-                    border: item != '11' ? `0.1px solid ${alpha(theme.palette.text.primary, 0.07)}` : '',
+                    height: "50px",
+                    border:
+                      item != "11"
+                        ? `0.1px solid ${alpha(
+                            theme.palette.text.primary,
+                            0.07
+                          )}`
+                        : "",
                   }}
                 >
                   <Typography
                     variant="caption"
-                    sx={{ bgcolor: 'background.paper', mt: -2.2, px: 0.9 }}
+                    sx={{ bgcolor: "background.paper", mt: -2.2, px: 0.9 }}
                   >
-
-                    {item != '11' ? item : ''}
+                    {item != "11" ? item : ""}
                   </Typography>
                 </Grid>
               ))}
@@ -219,15 +222,16 @@ export default function Page() {
 
             {daysOfSelectedWeek.map((item, index) => (
               <Grid xs={1.12} item>
-
                 <DaysOfWeek
                   item={item}
                   key={index}
                   setOpenQuickAddModal={setOpenQuickAddModal}
                   hoursOfDay={hoursOfDay}
                   selectedWeek={selectedWeek}
-                  sessions={selectedWeekPlans.data?.data.filter(
-                    (i) => i.planTagId !=null ? selectedTag.includes(i.planTagId) || !i.isOwner :( i.planRequestTypeId || !i.isOwner),
+                  sessions={selectedWeekPlans.data?.data.filter((i:any) =>
+                    i.planTagId != null
+                      ? selectedTag.includes(i.planTagId) || !i.isOwner
+                      : i.planRequestTypeId || !i.isOwner
                   )}
                 />
               </Grid>
@@ -260,29 +264,29 @@ export default function Page() {
 }
 
 const hoursOfDay = [
-  '11',
-  '00:00',
-  '01:00',
-  '02:00',
-  '03:00',
-  '04:00',
-  '05:00',
-  '06:00',
-  '07:00',
-  '08:00',
-  '09:00',
-  '10:00',
-  '11:00',
-  '12:00',
-  '13:00',
-  '14:00',
-  '15:00',
-  '16:00',
-  '17:00',
-  '18:00',
-  '19:00',
-  '20:00',
-  '21:00',
-  '22:00',
-  '23:00',
+  "11",
+  "00:00",
+  "01:00",
+  "02:00",
+  "03:00",
+  "04:00",
+  "05:00",
+  "06:00",
+  "07:00",
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+  "19:00",
+  "20:00",
+  "21:00",
+  "22:00",
+  "23:00",
 ];

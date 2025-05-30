@@ -1,8 +1,7 @@
 'use client';
 import {
   Alert,
-  Box,
-  Button,
+ 
   Container,
   Grid,
   IconButton,
@@ -10,27 +9,27 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useTranslations } from 'next-intl';
+
 import { useParams, useRouter } from 'next/navigation';
-import { PmlmIcon } from '#/ui/component/PmlmIcon';
+import { PmlmIcon } from '@/components/PmlmIcon';
 import { useState } from 'react';
 
 
-import NewSession from '#/ui/main/planning/session/NewSession';
-import { useDeleteDraftMutation } from '#/redux/services/user/planningApi';
+import NewSession from '@/components/planning/session/NewSession';
+import { useDeleteDraftMutation } from '@/redux/services/planningApi';
 import {
   setAlert,
   setMessage,
   setSuccess,
-} from '#/redux/features/snackBarHandlerSlice';
-import { useAppDispatch } from '#/redux/hooks';
+} from '@/redux/features/snackBarHandlerSlice';
+import { useAppDispatch } from '@/redux/hooks';
 import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
-import AlertCancelModal from '#/ui/main/planning/common/AlertCancelModal';
+import AlertCancelModal from '@/components/planning/common/AlertCancelModal';
 export default function Page() {
   const [infoModal, setinfoModal] = useState(false);
   const [exitSafeModal, setExitSafe] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
-  const t = useTranslations();
+
   const theme = useTheme();
   const router = useRouter();
   const { lang, id } = useParams();
@@ -43,9 +42,9 @@ export default function Page() {
     })
       .unwrap()
       .then((response: any) => {
-        dispatch(setAlert(t(response?.status)));
-        dispatch(setSuccess(t(response?.data)));
-        dispatch(setMessage(t(response?.message)));
+        dispatch(setAlert(response?.status));
+        dispatch(setSuccess(response?.data));
+        dispatch(setMessage(response?.message));
 
         setinfoModal(false);
         setAlertModal(true);
@@ -100,7 +99,7 @@ export default function Page() {
             />
           </IconButton>
           <Typography variant="h6">
-            {id !== '0' ? t('Edit_Session') : t('New_Session')}
+            {id !== '0' ? 'Edit_Session' : 'New_Session'}
           </Typography>
         </Grid>
       </Grid>
@@ -111,8 +110,8 @@ export default function Page() {
       <AlertCancelModal
         openModal={exitSafeModal}
         onClose={() => setExitSafe(false)}
-        title={`${t('Unsaved_changes')}`}
-        content={t('exit_without_saving?')}
+        title={'Unsaved_changes'}
+        content={'exit_without_saving?'}
         action={() => router.push(`/${lang}/planning/`)}
       />
 
@@ -137,7 +136,7 @@ export default function Page() {
           }}
           icon={<CheckBoxRoundedIcon />}
         >
-          {t('Meet_cancel_alert')}
+          {'Meet_cancel_alert'}
         </Alert>
       </Snackbar>
     </Container>
